@@ -36,27 +36,28 @@ const TutorInterface: React.FC<TutorInterfaceProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl h-[85vh] flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+    <div className="w-full max-w-5xl h-[90vh] flex flex-col bg-white rounded-xl shadow-xl border border-slate-300 overflow-hidden">
       {/* Header */}
-      <header className="px-6 py-4 bg-white border-b border-slate-100 flex items-center justify-between shrink-0">
+      <header className="px-6 py-4 bg-slate-800 text-white flex items-center justify-between shrink-0 border-b border-slate-900">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl shadow-inner">
-            🤖
+          <div className="w-10 h-10 bg-white/10 rounded flex items-center justify-center text-xl border border-white/20">
+            📚
           </div>
           <div>
-            <h2 className="font-bold text-slate-800 leading-tight">Mri-EduT</h2>
+            <h2 className="font-serif font-bold text-lg leading-tight tracking-tight">Mri-EduT</h2>
             <div className="flex gap-2 mt-0.5">
-              <span className="text-xs font-medium px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">Class {profile.grade}</span>
-              <span className="text-xs font-medium px-2 py-0.5 bg-slate-50 text-slate-600 rounded-full">{profile.subject}</span>
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600">Class {profile.grade}</span>
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-slate-700 text-slate-300 rounded border border-slate-600">{profile.subject}</span>
             </div>
           </div>
         </div>
         <button 
           onClick={onReset}
-          className="text-slate-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
-          title="Switch Class/Subject"
+          className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider"
+          title="Change Subject"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>Change Room</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 8.959 8.959 0 01-9 9m-9-9a9 9 0 019-9" />
           </svg>
         </button>
@@ -65,17 +66,17 @@ const TutorInterface: React.FC<TutorInterfaceProps> = ({
       {/* Chat Area */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth bg-slate-50/50"
+        className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth bg-slate-50"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-4">
-            <div className="w-20 h-20 bg-blue-50 text-blue-400 rounded-full flex items-center justify-center text-4xl animate-pulse">
-              👋
+            <div className="w-16 h-16 bg-white border border-slate-200 text-slate-300 rounded-lg flex items-center justify-center text-3xl">
+              📝
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-800">Hi {profile.name}!</h3>
-              <p className="text-slate-500 max-w-sm mx-auto">
-                I'm your {profile.subject} tutor for Class {profile.grade}. What would you like to learn today?
+              <h3 className="text-lg font-serif font-bold text-slate-800">Welcome, Student {profile.name}</h3>
+              <p className="text-slate-500 text-sm max-w-sm mx-auto font-medium">
+                I am your dedicated academic assistant for {profile.subject}. How may I help you with your studies today?
               </p>
             </div>
           </div>
@@ -84,23 +85,23 @@ const TutorInterface: React.FC<TutorInterfaceProps> = ({
           <ChatMessage key={m.id} message={m} />
         ))}
         {isTyping && messages[messages.length-1]?.role === 'user' && (
-          <div className="flex items-center gap-2 p-4 bg-white rounded-2xl w-fit shadow-sm border border-slate-100">
+          <div className="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-lg w-fit shadow-sm">
             <div className="flex gap-1">
-              <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-              <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-              <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
             </div>
           </div>
         )}
       </div>
 
       {/* Input Area */}
-      <footer className="p-4 bg-white border-t border-slate-100 shrink-0">
-        <form onSubmit={handleSubmit} className="flex gap-2 max-w-3xl mx-auto">
+      <footer className="p-6 bg-white border-t border-slate-200 shrink-0">
+        <form onSubmit={handleSubmit} className="flex gap-3 max-w-4xl mx-auto">
           <input
             type="text"
-            placeholder={`Ask me anything about ${profile.subject}...`}
-            className="flex-1 px-5 py-3.5 rounded-2xl bg-slate-100 focus:bg-white border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-slate-700"
+            placeholder={`Enter your question regarding ${profile.subject}...`}
+            className="flex-1 px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-slate-800 focus:ring-1 focus:ring-slate-800 outline-none transition-all text-slate-800 placeholder:text-slate-400 font-medium"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isTyping}
@@ -108,16 +109,16 @@ const TutorInterface: React.FC<TutorInterfaceProps> = ({
           <button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="w-14 h-14 flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-2xl shadow-lg hover:shadow-blue-200 transition-all shrink-0"
+            className="px-6 flex items-center justify-center bg-slate-800 hover:bg-slate-900 disabled:bg-slate-300 text-white rounded-lg shadow transition-all shrink-0 font-bold text-sm uppercase tracking-widest"
           >
-            <svg className="w-6 h-6 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
+            Submit
           </button>
         </form>
-        <p className="text-[10px] text-center text-slate-400 mt-2 uppercase tracking-wider font-semibold">
-          Tailored tutoring powered by Gemini
-        </p>
+        <div className="flex items-center justify-center gap-2 mt-4 text-[9px] text-slate-400 uppercase font-bold tracking-[0.2em]">
+          <span>Mri-EduT AI System</span>
+          <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+          <span>Class {profile.grade} Support</span>
+        </div>
       </footer>
     </div>
   );

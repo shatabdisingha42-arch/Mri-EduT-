@@ -19,23 +19,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onStart }) => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-      <div className="p-8 bg-blue-600 text-white text-center">
-        <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-          <span className="text-4xl">🎓</span>
+    <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
+      <div className="p-8 bg-slate-800 text-white text-center border-b border-slate-700">
+        <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-4 border border-white/20">
+          <span className="text-3xl text-white">📖</span>
         </div>
-        <h1 className="text-2xl font-bold">Welcome to Mri-EduT</h1>
-        <p className="text-blue-100 mt-2">Personalized learning for every student</p>
+        <h1 className="text-2xl font-serif font-bold tracking-tight">Mri-EduT</h1>
+        <p className="text-slate-300 text-sm mt-1 uppercase tracking-widest font-medium">Academic Excellence</p>
       </div>
       
-      <form onSubmit={handleSubmit} className="p-8 space-y-6">
+      <form onSubmit={handleSubmit} className="p-8 space-y-5 bg-white">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">What's your name?</label>
+          <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Student Name</label>
           <input
             type="text"
             required
-            placeholder="Enter your name"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            placeholder="e.g. John Doe"
+            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-1 focus:ring-slate-800 focus:border-slate-800 outline-none transition-all text-slate-800 placeholder:text-slate-400"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -43,9 +43,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onStart }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Your Grade (Class)</label>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Grade Level</label>
             <select
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-1 focus:ring-slate-800 focus:border-slate-800 outline-none bg-white text-slate-800"
               value={grade}
               onChange={(e) => setGrade(Number(e.target.value) as GradeLevel)}
             >
@@ -56,9 +56,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onStart }) => {
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Subject</label>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Subject</label>
             <select
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-1 focus:ring-slate-800 focus:border-slate-800 outline-none bg-white text-slate-800"
               value={subject}
               onChange={(e) => setSubject(e.target.value as Subject)}
             >
@@ -69,12 +69,17 @@ const Onboarding: React.FC<OnboardingProps> = ({ onStart }) => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
-        >
-          Start Learning
-        </button>
+        <div className="pt-2">
+          <button
+            type="submit"
+            className="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-lg shadow transition-colors"
+          >
+            Enter Study Room
+          </button>
+          <p className="text-[10px] text-center text-slate-400 mt-4 uppercase font-medium">
+            Personalized Academic Assistance
+          </p>
+        </div>
       </form>
     </div>
   );
