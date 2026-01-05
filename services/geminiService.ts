@@ -1,12 +1,13 @@
 
-import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { UserProfile, Subject } from "../types";
 
 export class GeminiTutorService {
   private ai: GoogleGenAI;
-  private chat: Chat | null = null;
+  private chat: any | null = null;
 
   constructor() {
+    // API_KEY is injected by Vite's define during build
     this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   }
 
