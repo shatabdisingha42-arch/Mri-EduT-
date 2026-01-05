@@ -1,0 +1,5 @@
+{
+  "name": "Mri-EduT",
+  "description": "A smart AI-powered K-12 tutor that adapts its teaching style, language, and complexity based on a student's grade level (1-12) and subject.",
+  "requestFramePermissions": []
+}
