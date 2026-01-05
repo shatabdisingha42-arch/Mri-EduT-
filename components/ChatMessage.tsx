@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Message } from '../types';
 
@@ -16,27 +15,35 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       
       let text = message.content;
       
-      // If KaTeX is available, we split by math delimiters
+      // If text is empty (thinking state)
+      if (!text) return;
+
+      // Handle common AI quirk: escaped markers
+      text = text.replace(/\\\*/g, '*').replace(/\\_/g, '_');
+
+      // More robust math detection: supports $$, $, \[, \(
+      const mathRegex = /(\$\$[\s\S]+?\$\$|\$[\s\S]+?\$|\\\[[\s\S]+?\\\]|\\\(.+?\\\))/g;
+      
       if (window.katex) {
-        const parts = text.split(/(\$\$[\s\S]*?\$\$|\$.*?\$)/g);
+        const parts = text.split(mathRegex);
         
         containerRef.current.innerHTML = parts.map(part => {
-          // Block Math $$...$$
-          if (part.startsWith('$$') && part.endsWith('$$')) {
-            const math = part.slice(2, -2);
+          // Block Math $$...$$ or \[...\]
+          if ((part.startsWith('$$') && part.endsWith('$$')) || (part.startsWith('\\\[') && part.endsWith('\\\]'))) {
+            const math = part.startsWith('$$') ? part.slice(2, -2) : part.slice(2, -2);
             try {
               return window.katex.renderToString(math, { displayMode: true, throwOnError: false });
             } catch (e) { return part; }
           } 
-          // Inline Math $...$
-          else if (part.startsWith('$') && part.endsWith('$')) {
-            const math = part.slice(1, -1);
+          // Inline Math $...$ or \(...\)
+          else if ((part.startsWith('$') && part.endsWith('$')) || (part.startsWith('\\\(') && part.endsWith('\\\)') )) {
+            const math = part.startsWith('$') ? part.slice(1, -1) : part.slice(2, -2);
             try {
               return window.katex.renderToString(math, { displayMode: false, throwOnError: false });
             } catch (e) { return part; }
           }
           
-          // Process basic markdown for non-math parts
+          // Process markdown for text parts
           return processMarkdown(part);
         }).join('');
       } else {
@@ -47,43 +54,51 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     const processMarkdown = (t: string) => {
       return t
         // Bold: **text**
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-extrabold">$1</strong>')
-        // Italic: *text* (only if not bold)
-        .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em class="italic">$1</em>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>')
+        // Italic: *text* (avoiding math interference)
+        .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em class="italic text-slate-600">$1</em>')
         // Newlines to <br/>
         .replace(/\n/g, '<br/>')
-        // Lists: lines starting with "- " or "* "
-        .replace(/^\s*[-*]\s+(.*)/gm, '<div class="flex gap-2 mb-1"><span class="text-slate-400">•</span><span>$1</span></div>')
-        // Headings: ### Heading
-        .replace(/^### (.*)/gm, '<h3 class="text-lg font-bold mt-4 mb-2 text-slate-800">$1</h3>')
-        .replace(/^## (.*)/gm, '<h2 class="text-xl font-bold mt-6 mb-3 text-slate-900 border-b border-slate-100 pb-1">$1</h2>');
+        // Lists: bullet points
+        .replace(/^\s*[-*]\s+(.*)/gm, '<div class="flex gap-3 mb-2 ml-2"><span class="text-slate-400 font-bold">•</span><span class="text-slate-700">$1</span></div>')
+        // Numbered lists
+        .replace(/^\s*\d+\.\s+(.*)/gm, '<div class="flex gap-3 mb-2 ml-2 font-medium"><span class="text-slate-900">$0</span></div>')
+        // Headings
+        .replace(/^### (.*)/gm, '<h3 class="text-xl font-bold mt-6 mb-3 text-slate-800 tracking-tight">$1</h3>')
+        .replace(/^## (.*)/gm, '<h2 class="text-2xl font-black mt-8 mb-4 text-slate-900 border-b-2 border-slate-100 pb-2 tracking-tight">$1</h2>');
     };
 
     renderContent();
   }, [message.content]);
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
-      <div className={`flex gap-4 w-full ${isUser ? 'flex-row-reverse max-w-[80%]' : 'flex-row max-w-[95%]'}`}>
-        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 shadow-sm text-base font-bold transition-all ${
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+      <div className={`flex gap-6 w-full ${isUser ? 'flex-row-reverse max-w-[70%]' : 'flex-row max-w-[95%]'}`}>
+        {/* Avatar */}
+        <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center shrink-0 shadow-md text-xl font-black transition-all ${
           isUser 
-            ? 'bg-white border-slate-200 text-slate-500 hover:border-slate-400' 
-            : 'bg-slate-900 border-slate-950 text-white'
+            ? 'bg-white border-slate-200 text-slate-400' 
+            : 'bg-slate-900 border-black text-white shadow-xl rotate-3'
         }`}>
-          {isUser ? 'S' : 'T'}
+          {isUser ? 'S' : 'MT'}
         </div>
         
-        <div className={`flex-1 p-6 rounded-2xl shadow-sm text-base leading-relaxed transition-all ${
+        {/* Message Bubble - Made MUCH wider and larger */}
+        <div className={`flex-1 p-8 rounded-3xl shadow-sm transition-all border ${
           isUser 
-            ? 'bg-white text-slate-700 border border-slate-200 border-r-4 border-r-slate-400' 
-            : 'bg-white text-slate-800 border border-slate-200 border-l-[6px] border-l-slate-900'
+            ? 'bg-white text-slate-700 border-slate-200 rounded-tr-none' 
+            : 'bg-white text-slate-800 border-slate-200 rounded-tl-none border-l-[10px] border-l-slate-900'
         }`}>
-          <div ref={containerRef} className="prose-slate max-w-none font-medium text-slate-700 space-y-1">
-            {/* Rendered by useEffect */}
-            {message.content === '' && <span className="text-slate-300 italic">Thinking...</span>}
+          <div ref={containerRef} className="prose-slate max-w-none text-lg leading-[1.8] font-medium text-slate-700">
+            {message.content === '' && (
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-3/4 bg-slate-100 animate-pulse rounded"></div>
+                <div className="h-4 w-1/2 bg-slate-100 animate-pulse rounded"></div>
+              </div>
+            )}
           </div>
-          <div className={`text-[10px] mt-4 opacity-40 font-bold uppercase tracking-wider ${isUser ? 'text-right' : 'text-left'}`}>
-            {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          <div className={`text-[10px] mt-6 opacity-30 font-black uppercase tracking-[0.2em] ${isUser ? 'text-right' : 'text-left'}`}>
+            {isUser ? 'Student' : 'Mri-EduT System'} • {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
       </div>
